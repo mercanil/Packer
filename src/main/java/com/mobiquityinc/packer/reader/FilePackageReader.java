@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
@@ -35,9 +36,18 @@ public class FilePackageReader implements PackageReader {
      * @return List<Package>
      */
     public List<Package> read(String absolutePath) {
-        LOGGER.error("Deneme Deneme deneme");
+
+        if (absolutePath == null || absolutePath.isEmpty()) {
+            throw new APIException("Invalid file path: " + absolutePath);
+        }
+
+        Path path = Paths.get(absolutePath);
+        if (!path.toFile().exists()) {
+            throw new APIException("File does not exist: " + absolutePath);
+        }
+
         try (BufferedReader br =
-                     Files.newBufferedReader(Paths.get(absolutePath), StandardCharsets.UTF_8)) {
+                     Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             return br.lines()
                     .map(this::processLine)
                     .collect(Collectors.toList());
@@ -60,7 +70,7 @@ public class FilePackageReader implements PackageReader {
 
     /**
      * @param firstPartOfFile (before ":" ) contains maximum weight of package
-     * @return Double convertion of string.
+     * @return Double conversion of string.
      */
     private double getMaximumLimitOfPackage(String firstPartOfFile) {
         return Double.parseDouble(firstPartOfFile);
