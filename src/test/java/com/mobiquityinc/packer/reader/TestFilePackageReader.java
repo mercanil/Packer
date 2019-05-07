@@ -21,9 +21,9 @@ public class TestFilePackageReader {
     public static void readFileBeforeClass() throws Exception {
         ClassLoader classLoader = TestFilePackageReader.class.getClassLoader();
         GIVEN = new File(classLoader.getResource("given_test").getFile());
-        WRONG_ITEM_COST = new File(classLoader.getResource("item_cost>100").getFile());
-        WRONG_ITEM_WEIGHT = new File(classLoader.getResource("item_weight>100").getFile());
-        WRONG_PACKAGE_WEIGHT = new File(classLoader.getResource("package_weight>100").getFile());
+        WRONG_ITEM_COST = new File(classLoader.getResource("item_cost_more_than_100").getFile());
+        WRONG_ITEM_WEIGHT = new File(classLoader.getResource("item_weight_more_than_100").getFile());
+        WRONG_PACKAGE_WEIGHT = new File(classLoader.getResource("package_weight_more_than_100").getFile());
         WRONG_ITEM_COUNT = new File(classLoader.getResource("16_item_in_file").getFile());
     }
 
