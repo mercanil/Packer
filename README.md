@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/mercanil/Packer.svg?style=svg)](https://circleci.com/gh/mercanil/Packer)
 # Packer
 Select best option from given list of packages
 
