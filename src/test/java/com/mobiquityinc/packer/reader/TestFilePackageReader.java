@@ -20,11 +20,11 @@ public class TestFilePackageReader {
     @BeforeAll
     public static void readFileBeforeClass() throws Exception {
         ClassLoader classLoader = TestFilePackageReader.class.getClassLoader();
-        GIVEN = new File(classLoader.getResource("given_test").getFile());
+        GIVEN = new File(classLoader.getResource("given_test_case").getFile());
         WRONG_ITEM_COST = new File(classLoader.getResource("item_cost_more_than_100").getFile());
         WRONG_ITEM_WEIGHT = new File(classLoader.getResource("item_weight_more_than_100").getFile());
         WRONG_PACKAGE_WEIGHT = new File(classLoader.getResource("package_weight_more_than_100").getFile());
-        WRONG_ITEM_COUNT = new File(classLoader.getResource("16_item_in_file").getFile());
+        WRONG_ITEM_COUNT = new File(classLoader.getResource("16_items_in_package").getFile());
     }
 
     @Test
@@ -38,8 +38,20 @@ public class TestFilePackageReader {
     public void testReadFile_Invalid_Path() {
         FilePackageReader filePackageReader = new FilePackageReader();
         Assertions.assertThrows(APIException.class, () -> filePackageReader.read("invalid-path"));
-
     }
+
+    @Test
+    public void testReadFile_EmptyPath() {
+        FilePackageReader filePackageReader = new FilePackageReader();
+        Assertions.assertThrows(APIException.class, () -> filePackageReader.read(""));
+    }
+
+    @Test
+    public void testReadFile_Nullath() {
+        FilePackageReader filePackageReader = new FilePackageReader();
+        Assertions.assertThrows(APIException.class, () -> filePackageReader.read(null));
+    }
+
 
 
     @Test
