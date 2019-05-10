@@ -1,28 +1,22 @@
 package com.mobiquityinc.packer.model;
 
-import java.util.Set;
+import lombok.Data;
 
+import java.util.List;
+
+/**
+ *
+ */
+@Data
 public class Package {
 
-  private final double weightLimit;
-  private final Set<Item> items;
+    private final double weightLimit;
+    private final List<Item> items;
 
-  /**
-   * Constructs a new <tt>Package</tt> else throws IllegalArgumentException
-   *
-   * @param weightLimit Weight limit of Package
-   * @param items       Packageable items
-   */
-  public Package(double weightLimit, Set<Item> items) {
-    this.weightLimit = weightLimit;
-    this.items = items;
-  }
-
-  public double getWeightLimit() {
-    return weightLimit;
-  }
-
-  public Set<Item> getItems() {
-    return items;
-  }
+    /**
+     * @return size of items in package
+     */
+    public int getItemSize() {
+        return this.items == null ? 0 : this.items.size();
+    }
 }
