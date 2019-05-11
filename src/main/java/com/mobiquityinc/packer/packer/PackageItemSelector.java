@@ -39,13 +39,9 @@ public class PackageItemSelector {
      */
     private List<ArrayList<Item>> createValidCombinations(Package aPackage) {
         List<ArrayList<Item>> validPackages = new ArrayList<>();
-        List<Item> items = aPackage.getItems();
         // remove item has more weight than package weight limit.
         // they will never be in the list.
-        items =
-                items.stream()
-                        .filter(item -> item.getWeight() < aPackage.getWeightLimit())
-                        .collect(Collectors.toList());
+        List<Item> items = getPackageWeigthLimitItems(aPackage);
         // looping all items in a package & make valid combinations
         for (Item item : items) {
             ArrayList<Item> currentItemListForPackage = new ArrayList<>();
@@ -62,6 +58,18 @@ public class PackageItemSelector {
             validPackages.add(currentItemListForPackage);
         }
         return validPackages;
+    }
+
+    /**
+     * remove item has more weight than package weight limit. they will never be in the list.
+     *
+     * @param Package all items and weight limit will be checked
+     * @return package weight limit items
+     */
+    private List<Item> getPackageWeigthLimitItems(Package aPackage) {
+        return aPackage.getItems().stream()
+                .filter(item -> item.getWeight() < aPackage.getWeightLimit())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -123,5 +131,5 @@ public class PackageItemSelector {
      */
     private double getTotalPrice(List<Item> items) {
         return items.stream().mapToDouble(Item::getCost).sum();
-    }
+  }
 }
