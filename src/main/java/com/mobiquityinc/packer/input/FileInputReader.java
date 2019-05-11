@@ -40,15 +40,10 @@ public class FileInputReader implements InputReader {
     @Override
     public List<Package> read(String absolutePath) throws APIException {
 
-        log.debug("Reading file " + absolutePath);
-        if (absolutePath == null || absolutePath.isEmpty()) {
-            throw new APIException(String.format(INVALID_FILE_PATH_MESSAGE, absolutePath));
-        }
+        isFilePathValid(absolutePath);
 
         Path path = Paths.get(absolutePath);
-        if (!path.toFile().exists()) {
-            throw new APIException(String.format(FILE_NOT_FOUND, absolutePath));
-        }
+        isFileExists(absolutePath, path);
 
         try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             return br.lines().map(this::processLine).collect(Collectors.toList());
@@ -56,6 +51,33 @@ public class FileInputReader implements InputReader {
             throw new APIException(String.format(GENERAL_EXCEPTION, absolutePath));
         } catch (IllegalArgumentException e) {
             throw new APIException(String.format(FORMAT_EXCEPTION, absolutePath));
+        }
+    }
+
+    /**
+     * Check the given file path valid
+     *
+     * @param absolutePath absolute path of file
+     * @throws APIException
+     */
+    private void isFilePathValid(String absolutePath) throws APIException {
+        log.debug("Reading file " + absolutePath);
+        if (absolutePath == null || absolutePath.isEmpty()) {
+            throw new APIException(String.format(INVALID_FILE_PATH_MESSAGE, absolutePath));
+        }
+    }
+
+
+    /**
+     * Check the given file exists
+     *
+     * @param absolutePath absolute path of file
+     * @param path         path of the absolute path of file
+     * @throws APIException
+     */
+    private void isFileExists(String absolutePath, Path path) throws APIException {
+        if (!path.toFile().exists()) {
+            throw new APIException(String.format(FILE_NOT_FOUND, absolutePath));
         }
     }
 
