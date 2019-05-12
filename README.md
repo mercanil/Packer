@@ -47,6 +47,13 @@ Add these dependency to you pom.xml
     <version>1.0-SNAPSHOT</version>
   <dependency>
 ```
+
+### Input File Format
+    
+$WeightLimit: (index,weight,cost) (index,weight,cost)
+
+10: (1,1,€1) (2,2,€2) (3,30.91,€14) (4,16.13,€58)
+
 #### Javadoc
 
 After building the project. You can check out the javadoc of project html file at this path.
@@ -55,6 +62,14 @@ $ cd ${project.basedir}
 $ mvn javadoc:javadoc
 ```
 You can find javadoc on  ${project.basedir}/target/apidocs/index.html
+
+#### Travis CI
+Project is integrated with [Travis]. After each commit [Travis CI] runs maven tests and creates valid version of project.
+
+
+### Coveralls   
+To ensure code quality the project unit test results are sent to [Coveralls] after each build. Unit tests and coverage 
+metrics are [available] in Coveralls.
 
 
 
@@ -66,3 +81,7 @@ You can find javadoc on  ${project.basedir}/target/apidocs/index.html
 [Assertj]: <https://joel-costigliola.github.io/assertj/>
 [SLF4J]: <https://www.slf4j.org/>
 [here]: <https://en.wikipedia.org/wiki/Knapsack_problem#0/1_knapsack_problem/>
+[Travis]: <https://travis-ci.org>
+[Travis CI]: <https://travis-ci.org/mercanil/Packer>
+[Coveralls]: <https://coveralls.io/>
+[available]: <https://coveralls.io/github/mercanil/Packer?branch=master/>
