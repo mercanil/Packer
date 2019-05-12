@@ -2,9 +2,11 @@ package com.mobiquityinc.packer.packer;
 
 import com.mobiquityinc.packer.exception.APIException;
 import com.mobiquityinc.packer.input.FileInputReader;
+import com.mobiquityinc.packer.input.ReadContext;
 import com.mobiquityinc.packer.model.Item;
 import com.mobiquityinc.packer.model.Package;
 import com.mobiquityinc.packer.output.StringOutputWriter;
+import com.mobiquityinc.packer.output.WriteContext;
 import com.mobiquityinc.packer.validator.PackageValidator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,13 +27,17 @@ public class Packer {
      * @throws APIException If given file path is wrong or items are invalid.
      */
     public static String pack(String fileName) throws APIException {
+
+        WriteContext writeContext = new WriteContext();
+        writeContext.setOutputWriter(new StringOutputWriter());
+
+        ReadContext readContext = new ReadContext();
+        readContext.setInputReader(new FileInputReader());
+
         PackageItemSelector packageItemSelector = new PackageItemSelector();
 
-        StringOutputWriter stringOutputWriter = new StringOutputWriter();
-        FileInputReader fileInputReader = new FileInputReader();
-
         log.info("Processing file " + fileName);
-        List<Package> packages = fileInputReader.read(fileName);
+        List<Package> packages = readContext.read(fileName);
         for (Package aPackage : packages) {
             PackageValidator.validatePackage(aPackage);
         }
@@ -41,6 +47,8 @@ public class Packer {
                 packages.stream().map(packageItemSelector::select).collect(Collectors.toList());
 
         log.info("Packing completed " + resultList.size() + " items processed.");
-        return stringOutputWriter.write(resultList);
-    }
+
+        return writeContext.write(resultList);
+  }
+
 }

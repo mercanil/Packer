@@ -11,13 +11,8 @@ import java.util.List;
  * Validate Package for given constraints
  */
 @Slf4j
-public class PackageValidator {
-    public static final int MAX_ITEM_SIZE = 15;
-    public static final double MAX_WEIGHT_LIMIT = 100d;
-    private static final String INVALID_PACKAGE_ITEM_COUNT_MESSAGE =
-            "Package item count cannot be more than %d,  package %s contains : %d items";
-    private static final String INVALID_PACKAGE_WEIGHT_MESSAGE =
-            "Package weight cannot be more than %f, package weight limit is :%f for package %s";
+public class PackageValidator implements Validator {
+
 
     private PackageValidator() {
     }

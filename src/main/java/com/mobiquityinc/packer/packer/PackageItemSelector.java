@@ -2,10 +2,9 @@ package com.mobiquityinc.packer.packer;
 
 import com.mobiquityinc.packer.model.Item;
 import com.mobiquityinc.packer.model.Package;
-import com.mobiquityinc.packer.validator.PackageValidator;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,124 +13,60 @@ import java.util.stream.Collectors;
  */
 public class PackageItemSelector {
 
-    /**
-     * Selects best packaging option from given possible items
-     *
-     * @param aPackage
-     * @return List of selected items for packaging
-     */
+
     public List<Item> select(Package aPackage) {
-        List<ArrayList<Item>> validCombinations = createValidCombinations(aPackage);
+        List<Item> itemList = aPackage.getItems();
+        int numberOfThings = itemList.size();
+        double weightLimit = aPackage.getWeightLimit();
 
-        if (validCombinations.size() == 0) {
-            return Collections.emptyList();
-        } else {
-            List<Item> bestPackage = getBestPackageItems(validCombinations);
-            Collections.sort(bestPackage);
-            return bestPackage;
+        aPackage.getItems().sort(Comparator.comparingDouble(Item::getWeight));
+
+        // we use a matrix to store the max value at each n-th item
+        int[][] matrix = new int[numberOfThings + 1][(int) (weightLimit * 100 + 1)];
+
+
+        int minWeight = (int) itemList.stream().min(Comparator.comparingDouble(Item::getWeight)).get().getWeight() * 100;
+
+        // first line is initialized to 0
+        for (int i = minWeight; i <= weightLimit * 100; i++) {
+            matrix[0][i] = 0;
         }
-    }
 
-    /**
-     * Creates all valid combinations for a given package
-     *
-     * @param aPackage
-     * @return possible valid combinations
-     */
-    private List<ArrayList<Item>> createValidCombinations(Package aPackage) {
-        List<ArrayList<Item>> validPackages = new ArrayList<>();
-        // remove item has more weight than package weight limit.
-        // they will never be in the list.
-        List<Item> items = getItemsWeightLessThanLimit(aPackage);
-        // looping all items in a package & make valid combinations
-        for (Item item : items) {
-            ArrayList<Item> currentItemListForPackage = new ArrayList<>();
-            currentItemListForPackage.add(item);
-            int validPackageSize = validPackages.size();
-            for (int j = 0; j < validPackageSize; j++) {
-                ArrayList<Item> combineWithValidPackageItem = new ArrayList<>(validPackages.get(j));
-                combineWithValidPackageItem.add(item);
-                // Add package if there is space for that package
-                if (isValidPackage(combineWithValidPackageItem, aPackage.getWeightLimit())) {
-                    validPackages.add(combineWithValidPackageItem);
-                }
-            }
-            validPackages.add(currentItemListForPackage);
-        }
-        return validPackages;
-    }
-
-    /**
-     * remove item has more weight than package weight limit. they will never be in the list.
-     *
-     * @param Package all items and weight limit will be checked
-     * @return package weight limit items
-     */
-    private List<Item> getItemsWeightLessThanLimit(Package aPackage) {
-        return aPackage.getItems().stream()
-                .filter(item -> item.getWeight() < aPackage.getWeightLimit())
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Checks the combination weight is less then weight limit
-     *
-     * @param currentItemListForPackage list of items in package
-     * @param packageWeightLimit weight limit of package
-     * @return
-     */
-    private boolean isValidPackage(ArrayList<Item> currentItemListForPackage, double packageWeightLimit) {
-        return packageWeightLimit >= getTotalWeight(currentItemListForPackage);
-    }
-
-    /**
-     * Finds the best package from the combinations
-     *
-     * @param combinations
-     * @return bestPackage
-     */
-    private List<Item> getBestPackageItems(List<ArrayList<Item>> combinations) {
-        List<Item> bestPackage = new ArrayList<>();
-        double bestPackagePrice = 0;
-        //Possible maximum weight limit
-        double bestPackageWeight = PackageValidator.MAX_WEIGHT_LIMIT;
-        for (List<Item> currentCombination : combinations) {
-            double combinationWeight = getTotalWeight(currentCombination);
-            double combinationPrice = getTotalPrice(currentCombination);
-            // get more valuable package
-            if (combinationPrice > bestPackagePrice) {
-                bestPackage = currentCombination;
-                bestPackagePrice = combinationPrice;
-                bestPackageWeight = combinationWeight;
-            } else if (combinationPrice == bestPackagePrice) {
-                // get lighter package if prices are same
-                if (combinationWeight < bestPackageWeight) {
-                    bestPackage = currentCombination;
-                    bestPackagePrice = combinationPrice;
-                    bestPackageWeight = combinationWeight;
-                }
+        // we iterate on things
+        for (int i = 1; i <= numberOfThings; i++) {
+            // we iterate on each maximumWeight
+            for (int j = minWeight; j <= weightLimit * 100; j++) {
+                if (itemList.get(i - 1).getWeight() * 100 > j)
+                    matrix[i][j] = matrix[i - 1][j];
+                else
+                    // we maximize value at this rank in the matrix
+                    matrix[i][j] = Math.max(matrix[i - 1][j], (int) Math.floor(matrix[i - 1][j - (int) Math.ceil(itemList.get(i - 1).getWeight() * 100)]
+                            + itemList.get(i - 1).getCost()));
             }
         }
-        return bestPackage;
+
+        int res = matrix[numberOfThings][(int) (weightLimit * 100)];
+        int w = (int) (weightLimit * 100);
+        List<Item> thingsSolution = new ArrayList<>();
+
+        for (int i = numberOfThings; i > 0 && res > 0; i--) {
+            if (res != matrix[i - 1][w]) {
+                thingsSolution.add(itemList.get(i - 1));
+                // remove value and weight
+                res -= Math.floor(itemList.get(i - 1).getCost());
+                w -= Math.floor(itemList.get(i - 1).getWeight() * 100);
+            }
+        }
+
+
+        //sort by index value
+        List result = thingsSolution.stream().sorted(Comparator.comparingInt(Item::getIndex)).collect(Collectors.toList());
+
+
+        return result;
+
     }
 
-    /**
-     * returns the weight for given Item list
-     *
-     * @param items
-     * @return weight
-     */
-    private double getTotalWeight(List<Item> items) {
-        return items.stream().mapToDouble(Item::getWeight).sum();
-    }
 
-    /**
-     * return the price for given Item list
-     *
-     * @param items
-     * @return price
-     */
-    private double getTotalPrice(List<Item> items) {
-        return items.stream().mapToDouble(Item::getCost).sum();
-  }
+
 }

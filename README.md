@@ -10,6 +10,17 @@ Stumpy developed with Java 8, a number of technologies and open source projects:
 * [Maven]
 * [JUnit]
 * [Lombok]
+* [SLF4J]
+* [Assertj]
+
+
+
+### Algorithm
+Dynamic programming solution for knapsack problem.
+You can get information about algorithm [here]
+
+### Design Patterns
+* Strategy design pattern implemented for selecting input and output algorithm at runtime.
 
 
 ### Installation
@@ -40,3 +51,6 @@ You can find javadoc on  ${project.basedir}/target/apidocs/index.html
 [Swagger]: <https://swagger.io/>
 [Maven]: <https://maven.apache.org/>
 [Lombok]: <https://projectlombok.org/>
+[Assertj]: <https://joel-costigliola.github.io/assertj/>
+[SLF4J]: <https://www.slf4j.org/>
+[here]: <https://en.wikipedia.org/wiki/Knapsack_problem#0/1_knapsack_problem/>

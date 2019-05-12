@@ -8,13 +8,7 @@ import lombok.extern.slf4j.Slf4j;
  * Validate Item for given constraints
  */
 @Slf4j
-public class ItemValidator {
-    public static final double MAX_WEIGHT = 100d;
-    public static final double MAX_COST = 100d;
-    private static final String INVALID_ITEM_COST_MESSAGE =
-            "Item cost cannot be more than %f , Wrong cost %f for item %s";
-    private static final String INVALID_ITEM_WEIGHT_MESSAGE =
-            "Item weight cannot be more than %f, Wrong cost %f  for item %s";
+public class ItemValidator implements Validator {
 
     private ItemValidator() {
     }
