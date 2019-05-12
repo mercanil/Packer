@@ -2,6 +2,7 @@ package com.mobiquityinc.packer.packer;
 
 import com.mobiquityinc.packer.model.Item;
 import com.mobiquityinc.packer.model.Package;
+import com.mobiquityinc.packer.validator.PackageValidator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,18 +42,18 @@ public class PackageItemSelector {
         List<ArrayList<Item>> validPackages = new ArrayList<>();
         // remove item has more weight than package weight limit.
         // they will never be in the list.
-        List<Item> items = getPackageWeigthLimitItems(aPackage);
+        List<Item> items = getItemsWeightLessThanLimit(aPackage);
         // looping all items in a package & make valid combinations
         for (Item item : items) {
             ArrayList<Item> currentItemListForPackage = new ArrayList<>();
             currentItemListForPackage.add(item);
             int validPackageSize = validPackages.size();
             for (int j = 0; j < validPackageSize; j++) {
-                ArrayList<Item> possibleCombinations = new ArrayList<>(validPackages.get(j));
-                possibleCombinations.add(item);
+                ArrayList<Item> combineWithValidPackageItem = new ArrayList<>(validPackages.get(j));
+                combineWithValidPackageItem.add(item);
                 // Add package if there is space for that package
-                if (isValidPackage(possibleCombinations, aPackage)) {
-                    validPackages.add(possibleCombinations);
+                if (isValidPackage(combineWithValidPackageItem, aPackage.getWeightLimit())) {
+                    validPackages.add(combineWithValidPackageItem);
                 }
             }
             validPackages.add(currentItemListForPackage);
@@ -66,7 +67,7 @@ public class PackageItemSelector {
      * @param Package all items and weight limit will be checked
      * @return package weight limit items
      */
-    private List<Item> getPackageWeigthLimitItems(Package aPackage) {
+    private List<Item> getItemsWeightLessThanLimit(Package aPackage) {
         return aPackage.getItems().stream()
                 .filter(item -> item.getWeight() < aPackage.getWeightLimit())
                 .collect(Collectors.toList());
@@ -75,12 +76,12 @@ public class PackageItemSelector {
     /**
      * Checks the combination weight is less then weight limit
      *
-     * @param currentItemListForPackage
-     * @param aPackage
+     * @param currentItemListForPackage list of items in package
+     * @param packageWeightLimit weight limit of package
      * @return
      */
-    private boolean isValidPackage(ArrayList<Item> currentItemListForPackage, Package aPackage) {
-        return aPackage.getWeightLimit() >= getTotalWeight(currentItemListForPackage);
+    private boolean isValidPackage(ArrayList<Item> currentItemListForPackage, double packageWeightLimit) {
+        return packageWeightLimit >= getTotalWeight(currentItemListForPackage);
     }
 
     /**
@@ -92,7 +93,8 @@ public class PackageItemSelector {
     private List<Item> getBestPackageItems(List<ArrayList<Item>> combinations) {
         List<Item> bestPackage = new ArrayList<>();
         double bestPackagePrice = 0;
-        double bestPackageWeight = 100;
+        //Possible maximum weight limit
+        double bestPackageWeight = PackageValidator.MAX_WEIGHT_LIMIT;
         for (List<Item> currentCombination : combinations) {
             double combinationWeight = getTotalWeight(currentCombination);
             double combinationPrice = getTotalPrice(currentCombination);
