@@ -14,6 +14,12 @@ import java.util.stream.Collectors;
 public class PackageItemSelector {
 
 
+    /**
+     * Select best item combination from given package
+     *
+     * @param aPackage package contains weight limit and possible items
+     * @return list of items with selected to be packaged
+     */
     public List<Item> select(Package aPackage) {
         List<Item> itemList = aPackage.getItems();
         int numberOfThings = itemList.size();
@@ -21,27 +27,18 @@ public class PackageItemSelector {
 
         aPackage.getItems().sort(Comparator.comparingDouble(Item::getWeight));
 
-        // we use a matrix to store the max value at each n-th item
-        int[][] matrix = new int[numberOfThings + 1][(int) (weightLimit * 100 + 1)];
 
+        int[][] matrix = createMatrix(itemList, weightLimit);
+        int minWeight = calculateMinWeight(itemList);
 
-        int minWeight = (int) itemList.stream().min(Comparator.comparingDouble(Item::getWeight)).get().getWeight() * 100;
-
-        // first line is initialized to 0
-        for (int i = minWeight; i <= weightLimit * 100; i++) {
-            matrix[0][i] = 0;
-        }
-
-        // we iterate on things
-        for (int i = 1; i <= numberOfThings; i++) {
-            // we iterate on each maximumWeight
+        for (int itemIndex = 1; itemIndex <= numberOfThings; itemIndex++) {
             for (int j = minWeight; j <= weightLimit * 100; j++) {
-                if (itemList.get(i - 1).getWeight() * 100 > j)
-                    matrix[i][j] = matrix[i - 1][j];
+                if (itemList.get(itemIndex - 1).getWeight() * 100 > j)
+                    matrix[itemIndex][j] = matrix[itemIndex - 1][j];
                 else
                     // we maximize value at this rank in the matrix
-                    matrix[i][j] = Math.max(matrix[i - 1][j], (int) Math.floor(matrix[i - 1][j - (int) Math.ceil(itemList.get(i - 1).getWeight() * 100)]
-                            + itemList.get(i - 1).getCost()));
+                    matrix[itemIndex][j] = Math.max(matrix[itemIndex - 1][j], (int) Math.floor(matrix[itemIndex - 1][j - (int) Math.ceil(itemList.get(itemIndex - 1).getWeight() * 100)]
+                            + itemList.get(itemIndex - 1).getCost()));
             }
         }
 
@@ -67,6 +64,38 @@ public class PackageItemSelector {
 
     }
 
+    /**
+     * Create initial matrix from given itemlist and weight limit*
+     *
+     * @param itemList    list of items in package
+     * @param weightLimit maximum weight that package can store
+     * @return two dimension int array for weight and item matrix
+     */
 
+    private int[][] createMatrix(List<Item> itemList, double weightLimit) {
+        int numberOfThings = itemList.size();
+        // we use a matrix to store the max value at each n-th item
+        int[][] matrix = new int[numberOfThings + 1][(int) (weightLimit * 100 + 1)];
+
+
+        int minWeight = calculateMinWeight(itemList);
+
+        // first line is initialized to 0
+        for (int i = minWeight; i <= weightLimit * 100; i++) {
+            matrix[0][i] = 0;
+        }
+        return matrix;
+    }
+
+    /**
+     * return minimum weight of item from given item list
+     *
+     * @param itemList item list for selecting minimum weight
+     * @return min Minimum weight in item list
+     */
+    private int calculateMinWeight(List<Item> itemList) {
+        return (int) itemList.stream().min(Comparator.comparingDouble(Item::getWeight)).get().getWeight() * 100;
+
+    }
 
 }
