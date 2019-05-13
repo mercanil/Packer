@@ -58,7 +58,7 @@ public class FileInputReader implements InputReader {
      * Check the given file path valid
      *
      * @param absolutePath absolute path of file
-     * @throws APIException
+     * @throws APIException if file path is not correct
      */
     private void isFilePathValid(String absolutePath) throws APIException {
         log.debug("Reading file " + absolutePath);
@@ -73,7 +73,7 @@ public class FileInputReader implements InputReader {
      *
      * @param absolutePath absolute path of file
      * @param path         path of the absolute path of file
-     * @throws APIException
+     * @throws APIException if file not found
      */
     private void isFileExists(String absolutePath, Path path) throws APIException {
         if (!path.toFile().exists()) {
@@ -109,7 +109,7 @@ public class FileInputReader implements InputReader {
      * gets second part of line in text file. List of items creates Set of item from given string.
      *
      * @param itemAsString rest of the file. This string contains set of items
-     * @return Object representation of items
+     * @return List of items from line
      */
     private List<Item> getPackageItemList(String itemAsString) {
         log.debug("Processing item" + itemAsString);
@@ -119,11 +119,11 @@ public class FileInputReader implements InputReader {
     }
 
     /**
-     * pattern of string : (INDEX_NUMBER ,WEIGHT ,COST ) cost contains currency symbol. Removed while
-     * reading value. at the end of amount.
+     * pattern of string : (INDEX_NUMBER ,WEIGHT ,COST ) cost contains currency symbol removed while
+     * reading value. at the beginning of amount.
      *
-     * @param itemStr single definition of item
-     * @return Item String to Item conversion
+     * @param itemStr definition of single element from file
+     * @return Item converted from string
      */
     private Item getItemFromString(String itemStr) {
         // remove ( and ) chars from string
