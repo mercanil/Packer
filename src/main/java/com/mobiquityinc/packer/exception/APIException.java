@@ -6,6 +6,8 @@ package com.mobiquityinc.packer.exception;
  * <ul>
  * <li>Invalid Input resource
  * <li>Invalid Input parameters
+ * <li>Invalid File path
+ * <li>Null File path
  * </ul>
  */
 public class APIException extends Exception {
