@@ -36,8 +36,8 @@ public class ItemValidator implements Validator {
     /**
      * Throws exception if Item arguments are not valid
      *
-     * @param aItem argument for validation
-     * @throws APIException
+     * @param aItem item will be validated
+     * @throws APIException throws if item cost or weight is invalid
      */
     public static void validateItem(Item aItem) throws APIException {
         log.debug("Validating item : " + aItem.toString());

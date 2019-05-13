@@ -20,7 +20,7 @@ public class PackageValidator implements Validator {
     /**
      * Checks if package weight limit is less than limit
      *
-     * @param pack
+     * @param pack to be validated
      * @return boolean result of validation
      */
     public static boolean isWeightValid(Package pack) {
@@ -30,7 +30,7 @@ public class PackageValidator implements Validator {
     /**
      * Checks if package item size is less than limit
      *
-     * @param pack
+     * @param pack to be validate
      * @return boolean result of validation
      */
     public static boolean isItemSizeValid(Package pack) {
@@ -41,7 +41,7 @@ public class PackageValidator implements Validator {
      * Throws exception if Package arguments are not valid
      *
      * @param aPackage
-     * @throws APIException
+     * @throws APIException if item size or weight limit is incorrect
      */
     public static void validatePackage(Package aPackage) throws APIException {
         log.debug("Validation package:" + aPackage);

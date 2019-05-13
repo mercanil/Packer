@@ -26,7 +26,7 @@ The implementation of the algorithm can be found in the class PackageItemSelecto
 
 
 ###  How to use (For Maven Projects)
-Packer requires [JDK8]. Please check your JAVA_HOME for success of build.
+[Packer] requires [JDK8]. Please check your JAVA_HOME for success of build.
 ```sh
 $ echo ${JAVA_HOME}
 ```
@@ -64,12 +64,11 @@ $ mvn javadoc:javadoc
 You can find javadoc on  ${project.basedir}/target/apidocs/index.html
 
 #### Travis CI
-Project is integrated with [Travis]. After each commit [Travis CI] runs maven tests and creates valid version of project.
+Project is integrated with [Travis]. After each commit [Travis CI] runs maven tests and builds project.
 
 
 ### Coveralls   
-To ensure code quality the project unit test results are sent to [Coveralls] after each build. Unit tests and coverage 
-metrics are [available] in Coveralls.
+To ensure code quality in the project unit test coverage reports generated with [JaCoCo] and sent to [Coveralls] after each build.
 
 
 
@@ -85,3 +84,5 @@ metrics are [available] in Coveralls.
 [Travis CI]: <https://travis-ci.org/mercanil/Packer>
 [Coveralls]: <https://coveralls.io/>
 [available]: <https://coveralls.io/github/mercanil/Packer?branch=master/>
+[JaCoCo]: <https://www.eclemma.org/jacoco/>
+[Packer]: <https://github.com/mercanil/Packer/>

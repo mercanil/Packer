@@ -91,7 +91,7 @@ public class PackageItemSelector {
      * return minimum weight of item from given item list
      *
      * @param itemList item list for selecting minimum weight
-     * @return min Minimum weight in item list
+     * @return minimum weight in item list
      */
     private int calculateMinWeight(List<Item> itemList) {
         return (int) itemList.stream().min(Comparator.comparingDouble(Item::getWeight)).get().getWeight() * 100;

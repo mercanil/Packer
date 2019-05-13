@@ -24,7 +24,7 @@ public class Packer {
      *
      * @param fileName absolute path of string to process
      * @return output string. Contains information about selected item for package
-     * @throws APIException If given file path is wrong or items are invalid.
+     * @throws APIException If given file path is wrong , null or items are invalid in the file .
      */
     public static String pack(String fileName) throws APIException {
 
